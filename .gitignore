@@ -1,3 +1,7 @@
+# Custom
+data/DNN-EdgeIIoT-dataset.csv
+data/.DNN-EdgeIIoT-dataset.ok
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
