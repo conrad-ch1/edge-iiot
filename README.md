@@ -14,3 +14,11 @@ make check-data
 
 # Run all setup tasks
 make all
+
+
+
+
+
+
+
+echo -e "AIRFLOW_UID=$(id -u)" > .env
