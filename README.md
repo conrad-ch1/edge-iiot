@@ -22,3 +22,5 @@ make all
 
 
 echo -e "AIRFLOW_UID=$(id -u)" > .env
+
+airflow airflow
