@@ -9,6 +9,7 @@ from src.utils.data_processing import (
     MissingValueHandler,
     CategoricalFeatureProcessor,
 )
+from src.utils.logger import logger
 
 
 def preprocess_data(
@@ -33,8 +34,10 @@ def preprocess_data(
         Name of the target column in the dataset. Default is "Attack_label".
     """
     # Load the raw data
+    logger.info("Loading dataset from %s", input_file)
     df = pd.read_csv(input_file)
 
+    logger.info("Data preprocessing...")
     y = df[target]
     X = df.drop(columns=[target])
 
@@ -67,6 +70,7 @@ def preprocess_data(
     X_test_transformed = data_pipeline.transform(X_test)
 
     # Save the transformed datasets to parquet files
+    logger.info("Saving preprocessed data and pipeline to %s", output_dir)
     X_train_transformed.to_parquet(f"{output_dir}/X_train.parquet")
     y_train.to_parquet(f"{output_dir}/y_train.parquet")
     X_val_transformed.to_parquet(f"{output_dir}/X_val.parquet")
@@ -77,4 +81,4 @@ def preprocess_data(
     # Save the preprocessing pipeline
     joblib.dump(data_pipeline, f"{output_dir}/data_pipeline.joblib")
 
-    print("Data preprocessing completed and saved to parquet files.")
+    logger.info("Data saved successfully")
