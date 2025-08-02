@@ -7,7 +7,7 @@
 .DEFAULT_GOAL := help
 
 # Variables
-DATA_DIR := data
+DATA_DIR := data/raw
 SCRIPTS_DIR := scripts
 CSV_FILE := $(DATA_DIR)/DNN-EdgeIIoT-dataset.csv
 MARKER_FILE := $(DATA_DIR)/.DNN-EdgeIIoT-dataset.ok

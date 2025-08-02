@@ -1,7 +1,6 @@
 # Custom
-data/DNN-EdgeIIoT-dataset.csv
-data/.DNN-EdgeIIoT-dataset.ok
 mlflow/mlartifacts/
+data/raw/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
