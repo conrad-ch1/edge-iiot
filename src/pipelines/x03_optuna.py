@@ -51,17 +51,18 @@ def optimize_model_params(
     def objective(trial):
         # Train the model
         xgb_classifier = xgb.XGBClassifier(
-            colsample_bytree=trial.suggest_float("colsample_bytree", 0.1, 0.8),
+            colsample_bytree=trial.suggest_float("colsample_bytree", 0.1, 1.0),
             subsample=trial.suggest_float("subsample", 0.2, 1.0),
-            min_child_weight=trial.suggest_int("min_child_weight", 1, 100),
-            learning_rate=trial.suggest_float("learning_rate", 0.01, 0.3),
-            gamma=trial.suggest_float("gamma", 0.0, 10.0),
-            max_depth=trial.suggest_int("max_depth", 4, 10),
-            reg_alpha=trial.suggest_float("reg_alpha", 0.0, 15.0),
-            reg_lambda=trial.suggest_float("reg_lambda", 0.0, 15.0),
-            n_estimators=trial.suggest_int("n_estimators", 50, 500),
+            # min_child_weight=trial.suggest_int("min_child_weight", 1, 128),
+            learning_rate=trial.suggest_float("learning_rate", 0.01, 1.0),
+            # gamma=trial.suggest_float("gamma", 0.0, 10.0),
+            # max_depth=trial.suggest_int("max_depth", 3, 8),
+            # reg_alpha=trial.suggest_float("reg_alpha", 0.0, 15.0),
+            # reg_lambda=trial.suggest_float("reg_lambda", 1.0, 15.0),
+            # scale_pos_weight=trial.suggest_float("scale_pos_weight", 1.0, 10.0),
             random_state=42,
-            tree_method="hist",
+            # tree_method="hist",
+            # eval_metric="aucpr",
         )
         xgb_classifier.fit(X_train, y_train)
 
