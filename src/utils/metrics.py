@@ -5,10 +5,13 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     balanced_accuracy_score,
+    roc_auc_score,
 )
 
 
-def get_metrics_binary(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
+def get_metrics_binary(
+    y_true: np.ndarray, y_pred: np.ndarray, y_prob: np.ndarray = None
+) -> dict:
     """Return basic evaluation metrics for a binary classification task.
 
     Parameters
@@ -39,6 +42,7 @@ def get_metrics_binary(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
         "recall": recall_score(y_true, y_pred, zero_division=0),
         "f1": f1_score(y_true, y_pred, zero_division=0),
         "balanced_accuracy": balanced_accuracy_score(y_true, y_pred),
+        "roc_auc": None if y_prob is None else roc_auc_score(y_true, y_prob),
     }
 
 

@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from sklearn.base import BaseEstimator, TransformerMixin, check_is_fitted
+from sklearn.feature_extraction import DictVectorizer
 
 
 class FeatureSelector(BaseEstimator, TransformerMixin):
@@ -202,3 +203,58 @@ class CategoricalFeatureProcessor(TransformerMixin, BaseEstimator):
             )
 
         return X
+
+
+class CustomDictVectorizer(TransformerMixin, BaseEstimator):
+    """
+    Transformer that applies sklearn's DictVectorizer to convert DataFrame rows
+    into dictionaries. It returns a dataframe.
+    """
+
+    def __init__(self):
+        """
+        Initialize the CustomDictVectorizer class.
+        This class does not require any parameters for initialization.
+        """
+
+    def fit(self, X: pd.DataFrame, y=None) -> "CustomDictVectorizer":
+        """
+        Fit the CustomDictVectorizer to the data.
+        This method does not perform any fitting as it only transforms data.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input DataFrame to fit the transformer.
+        y : None
+            Ignored, exists for compatibility with scikit-learn's API.
+
+        Returns
+        -------
+        self : CustomDictVectorizer
+            Fitted transformer.
+        """
+        self.dv_ = DictVectorizer(sparse=False)
+        self.dv_.fit(X.to_dict(orient="records"))
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transform the input DataFrame by converting it to a list of dictionaries.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input DataFrame to transform.
+
+        Returns
+        -------
+        list
+            List of dictionaries representing the transformed data.
+        """
+        check_is_fitted(self, "dv_")
+        return pd.DataFrame(
+            self.dv_.transform(X.to_dict(orient="records")),
+            columns=self.dv_.get_feature_names_out(),
+            index=X.index,
+        )

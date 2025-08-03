@@ -8,6 +8,7 @@ from src.utils.data_processing import (
     FeatureSelector,
     MissingValueHandler,
     CategoricalFeatureProcessor,
+    CustomDictVectorizer,
 )
 from src.utils.logger import logger
 
@@ -16,11 +17,11 @@ def preprocess_data(
     input_file: str,
     output_dir: str,
     cols_config_path: str,
-    target: str = "Attack_label",
+    target_col: str = "Attack_label",
 ) -> None:
     """
     Preprocess the dataset by selecting features, handling missing values,
-    and encoding categorical variables.
+    and encoding categorical variables. Saves the processed data to parquet files.
 
     Parameters
     ----------
@@ -35,11 +36,11 @@ def preprocess_data(
     """
     # Load the raw data
     logger.info("Loading dataset from %s", input_file)
-    df = pd.read_csv(input_file)
+    df = pd.read_csv(input_file, low_memory=False)
 
     logger.info("Data preprocessing...")
-    y = df[target]
-    X = df.drop(columns=[target])
+    y = df[target_col]
+    X = df.drop(columns=[target_col])
 
     # Build the data pipeline
     data_pipeline = Pipeline(
@@ -47,10 +48,7 @@ def preprocess_data(
             ("feature_selector", FeatureSelector(cols_config_path=cols_config_path)),
             ("missing_value_handler", MissingValueHandler()),
             ("categorical_feature_processor", CategoricalFeatureProcessor()),
-            (
-                "one_hot_encoder",
-                OneHotEncoder(handle_unknown="ignore", sparse_output=False),
-            ),
+            ("custom_dict_vectorizer", CustomDictVectorizer()),
         ]
     )
 
@@ -70,15 +68,25 @@ def preprocess_data(
     X_test_transformed = data_pipeline.transform(X_test)
 
     # Save the transformed datasets to parquet files
-    logger.info("Saving preprocessed data and pipeline to %s", output_dir)
-    X_train_transformed.to_parquet(f"{output_dir}/X_train.parquet")
-    y_train.to_parquet(f"{output_dir}/y_train.parquet")
-    X_val_transformed.to_parquet(f"{output_dir}/X_val.parquet")
-    y_val.to_parquet(f"{output_dir}/y_val.parquet")
-    X_test_transformed.to_parquet(f"{output_dir}/X_test.parquet")
-    y_test.to_parquet(f"{output_dir}/y_test.parquet")
+    logger.info("Saving preprocessed data to %s", output_dir)
+    df_train = pd.concat([X_train_transformed, y_train], axis=1)
+    df_val = pd.concat([X_val_transformed, y_val], axis=1)
+    df_test = pd.concat([X_test_transformed, y_test], axis=1)
+
+    df_train.to_parquet(f"{output_dir}/train.parquet")
+    df_val.to_parquet(f"{output_dir}/val.parquet")
+    df_test.to_parquet(f"{output_dir}/test.parquet")
 
     # Save the preprocessing pipeline
     joblib.dump(data_pipeline, f"{output_dir}/data_pipeline.joblib")
 
     logger.info("Data saved successfully")
+
+
+if __name__ == "__main__":
+    preprocess_data(
+        input_file="data/raw/DNN-EdgeIIoT-dataset.csv",
+        output_dir="data/processed",
+        cols_config_path="data/config/valid_columns.yaml",
+        target="Attack_label",
+    )
