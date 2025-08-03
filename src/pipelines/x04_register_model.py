@@ -1,7 +1,5 @@
 import pandas as pd
 import xgboost as xgb
-
-
 import mlflow
 from mlflow.models import infer_signature
 from mlflow.tracking import MlflowClient
