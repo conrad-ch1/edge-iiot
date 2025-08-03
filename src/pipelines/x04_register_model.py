@@ -93,15 +93,9 @@ def retrain_with_best_params(
     xgb_classifier = xgb.XGBClassifier(
         colsample_bytree=float(best_params["colsample_bytree"]),
         subsample=float(best_params["subsample"]),
-        min_child_weight=int(best_params["min_child_weight"]),
         learning_rate=float(best_params["learning_rate"]),
-        gamma=float(best_params["gamma"]),
         max_depth=int(best_params["max_depth"]),
-        reg_alpha=float(best_params["reg_alpha"]),
-        reg_lambda=float(best_params["reg_lambda"]),
-        n_estimators=int(best_params["n_estimators"]),
         random_state=42,
-        tree_method="hist",
     )
     xgb_classifier.fit(X_train, y_train)
 
