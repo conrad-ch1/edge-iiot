@@ -1,3 +1,4 @@
+import click
 import pandas as pd
 import xgboost as xgb
 import mlflow
@@ -6,17 +7,35 @@ import optuna
 from src.utils.metrics import get_metrics_binary
 from src.utils.logger import logger
 
-mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_experiment("2_hyperparameter_optimization")
+MLFLOW_TRACKING_URI = "http://localhost:5000"
+EXPERIMENT_NAME = "EdgeIIoT_02_Optimization"
+
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+mlflow.set_experiment(EXPERIMENT_NAME)
 
 
 def optimize_model_params(
     preprocessed_data_dir: str,
     target_metric: str = "f1",
     target_col: str = "Attack_label",
+    n_trials: int = 20,
 ) -> None:
+    """
+    Optimize hyperparameters of the XGBoost model using Optuna
+
+    Parameters
+    ----------
+    preprocessed_data_dir : str
+        Directory where the preprocessed data is stored.
+    target_metric : str
+        Name of the target metric to optimize. Default is "f1".
+    target_col : str
+        Name of the target column in the dataset. Default is "Attack_label".
+    n_trials : int
+        Number of trials for hyperparameter optimization. Default is 20.
+    """
     # Load the preprocessed data
-    logger.info("Loading preprocessed data from %s", preprocessed_data_dir)
+    logger.info(f"Loading preprocessed data from {preprocessed_data_dir}")
     df_train = pd.read_parquet(f"{preprocessed_data_dir}/train.parquet")
     df_val = pd.read_parquet(f"{preprocessed_data_dir}/val.parquet")
 
@@ -67,11 +86,47 @@ def optimize_model_params(
 
     # Create a study and optimize the hyperparameters
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=20, n_jobs=-1)
-    logger.info("Best hyperparameters found: %s", study.best_params)
+    study.optimize(objective, n_trials=n_trials)
+    logger.info(f"Best hyperparameters found: {study.best_params}")
+
+
+@click.command()
+@click.option(
+    "--preprocessed_data_dir",
+    default="data/processed",
+    help="Directory where the preprocessed data is stored.",
+)
+@click.option(
+    "--target_col",
+    default="Attack_label",
+    help="Name of the target column in the dataset.",
+)
+@click.option(
+    "--target_metric",
+    default="f1",
+    help="Name of the target metric to optimize.",
+)
+@click.option(
+    "--n_trials",
+    default=20,
+    help="Number of trials for hyperparameter optimization.",
+)
+def run(preprocessed_data_dir, target_col, target_metric, n_trials):
+    """Command-line interface to run the hyperparameter optimization pipeline."""
+    optimize_model_params(
+        preprocessed_data_dir=preprocessed_data_dir,
+        target_col=target_col,
+        target_metric=target_metric,
+        n_trials=n_trials,
+    )
 
 
 if __name__ == "__main__":
-    optimize_model_params(
-        "data/processed", target_col="Attack_label", target_metric="f1"
-    )
+    run()
+
+
+# python -m src.pipelines.x03_optuna \
+# --preprocessed_data_dir data/processed \
+# --target_col Attack_label \
+# --target_metric f1 \
+# --n_trials 20

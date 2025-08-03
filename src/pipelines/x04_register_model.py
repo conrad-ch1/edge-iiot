@@ -1,3 +1,4 @@
+import click
 import pandas as pd
 import xgboost as xgb
 import mlflow
@@ -8,14 +9,26 @@ from mlflow.entities import ViewType
 from src.utils.metrics import get_metrics_binary
 from src.utils.logger import logger
 
-mlflow.set_tracking_uri("http://localhost:5000")
+MLFLOW_TRACKING_URI = "http://localhost:5000"
+EXPERIMENT_NAME_OPTIMIZATION = "EdgeIIoT_02_Optimization"
+EXPERIMENT_NAME_PRODUCTION = "EdgeIIoT_03_Production"
 
-OPTIMIZATION_EXPERIMENT_NAME = "2_hyperparameter_optimization"
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
 
-def get_best_run(metric_name: str, metric_order: str) -> str:
+def get_best_run(
+    metric_name: str,
+    metric_order: str,
+) -> mlflow.entities.Run:
     """
     Retrieve the best run ID from the MLflow experiment.
+
+    Parameters
+    ----------
+    metric_name : str
+        The name of the metric to look for in the runs.
+    metric_order : str
+        The order of the metric ("ASC" for ascending, "DESC" for descending).
 
     Returns
     -------
@@ -24,7 +37,7 @@ def get_best_run(metric_name: str, metric_order: str) -> str:
     """
     logger.info("Retrieving the best run from MLflow")
     client = MlflowClient()
-    experiment = client.get_experiment_by_name(OPTIMIZATION_EXPERIMENT_NAME)
+    experiment = client.get_experiment_by_name(EXPERIMENT_NAME_OPTIMIZATION)
     runs = client.search_runs(
         experiment_ids=[experiment.experiment_id],
         filter_string="",
@@ -47,10 +60,10 @@ def get_best_run(metric_name: str, metric_order: str) -> str:
 def retrain_with_best_params(
     preprocessed_data_dir: str,
     best_run: mlflow.entities.Run,
-    target: str = "Attack_label",
+    target_col: str = "Attack_label",
 ) -> None:
     """
-    Retrain the model with the best hyperparameters.
+    Retrain the model using the best hyperparameters and register it in MLflow.
 
     Parameters
     ----------
@@ -58,7 +71,7 @@ def retrain_with_best_params(
         Directory where the preprocessed data is stored.
     best_run : mlflow.entities.Run
         The run object containing the best model parameters.
-    target : str
+    target_col : str
         Name of the target column in the dataset. Default is "Attack_label".
     """
     logger.info("Retraining model with best hyperparameters")
@@ -67,11 +80,11 @@ def retrain_with_best_params(
     df_train = pd.read_parquet(f"{preprocessed_data_dir}/train.parquet")
     df_val = pd.read_parquet(f"{preprocessed_data_dir}/val.parquet")
 
-    X_train = df_train.drop(columns=[target])
-    y_train = df_train[target]
+    X_train = df_train.drop(columns=[target_col])
+    y_train = df_train[target_col]
 
-    X_val = df_val.drop(columns=[target])
-    y_val = df_val[target]
+    X_val = df_val.drop(columns=[target_col])
+    y_val = df_val[target_col]
 
     # Get best parameters from the run
     best_params = best_run.data.params
@@ -96,7 +109,7 @@ def retrain_with_best_params(
     y_pred_xgb = xgb_classifier.predict(X_val)
     y_prob_xgb = xgb_classifier.predict_proba(X_val)[:, 1]
 
-    mlflow.set_experiment("3_production_model")
+    mlflow.set_experiment(EXPERIMENT_NAME_PRODUCTION)
     with mlflow.start_run(tags={"mlflow.runName": "XGBoostProductionModel"}):
         # Log model parameters
         mlflow.log_params(xgb_classifier.get_params())
@@ -117,6 +130,7 @@ def retrain_with_best_params(
         mlflow.xgboost.log_model(
             xgb_classifier,
             name="xgb_classifier",
+            model_format="ubj",
             signature=signature,
             registered_model_name="XGB-binary-production",
         )
@@ -130,10 +144,37 @@ def retrain_with_best_params(
         logger.info("Model retrained and logged successfully")
 
 
-if __name__ == "__main__":
-    best_run = get_best_run(metric_name="recall", metric_order="desc")
+@click.command()
+@click.option(
+    "--preprocessed_data_dir",
+    default="data/processed",
+    help="Directory where the preprocessed data is stored.",
+)
+@click.option(
+    "--metric_name",
+    default="f1",
+    help="Name of the metric to look for in the runs.",
+)
+@click.option(
+    "--metric_order",
+    default="DESC",
+    type=click.Choice(["ASC", "DESC"], case_sensitive=True),
+    help="Order of the metric (ASC for ascending, DESC for descending).",
+)
+def run(preprocessed_data_dir, metric_name, metric_order):
+    """Command-line interface to run the model registration pipeline."""
+    best_run = get_best_run(metric_name=metric_name, metric_order=metric_order)
     retrain_with_best_params(
-        preprocessed_data_dir="data/processed",
+        preprocessed_data_dir=preprocessed_data_dir,
         best_run=best_run,
-        target="Attack_label",
+        target_col="Attack_label",
     )
+
+
+if __name__ == "__main__":
+    run()
+
+# python -m src.pipelines.x04_register_model \
+# --preprocessed_data_dir data/processed \
+# --metric_name f1 \
+# --metric_order DESC

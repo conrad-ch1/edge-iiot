@@ -1,3 +1,4 @@
+import click
 import pandas as pd
 import joblib
 from sklearn.pipeline import Pipeline
@@ -30,11 +31,11 @@ def preprocess_data(
         Directory where the preprocessed data will be saved.
     cols_config_path : str
         Path to the YAML file containing column configurations.
-    target : str
+    target_col : str
         Name of the target column in the dataset. Default is "Attack_label".
     """
     # Load the raw data
-    logger.info("Loading dataset from %s", input_file)
+    logger.info(f"Loading dataset from {input_file}")
     df = pd.read_csv(input_file, low_memory=False)
 
     logger.info("Data preprocessing...")
@@ -60,6 +61,10 @@ def preprocess_data(
         X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
     )
 
+    logger.info(
+        f"Train shape: {X_train.shape}, Val: {X_val.shape}, Test: {X_test.shape}"
+    )
+
     # Fit the pipeline on the training data
     data_pipeline.fit(X_train)
     X_train_transformed = data_pipeline.transform(X_train)
@@ -67,7 +72,7 @@ def preprocess_data(
     X_test_transformed = data_pipeline.transform(X_test)
 
     # Save the transformed datasets to parquet files
-    logger.info("Saving preprocessed data to %s", output_dir)
+    logger.info(f"Saving preprocessed data to {output_dir}")
     df_train = pd.concat([X_train_transformed, y_train], axis=1)
     df_val = pd.concat([X_val_transformed, y_val], axis=1)
     df_test = pd.concat([X_test_transformed, y_test], axis=1)
@@ -82,10 +87,36 @@ def preprocess_data(
     logger.info("Data saved successfully")
 
 
+@click.command()
+@click.option(
+    "--input_file",
+    default="data/raw/DNN-EdgeIIoT-dataset.csv",
+    help="Path to the input CSV file containing the dataset.",
+)
+@click.option(
+    "--output_dir",
+    default="data/processed",
+    help="Directory where the preprocessed data will be saved.",
+)
+@click.option(
+    "--cols_config_path",
+    default="data/config/valid_columns.yaml",
+    help="Path to the YAML file containing column configurations.",
+)
+@click.option(
+    "--target_col",
+    default="Attack_label",
+    help="Name of the target column in the dataset.",
+)
+def run(input_file, output_dir, cols_config_path, target_col):
+    """Command-line interface to run the data preprocessing pipeline."""
+    preprocess_data(input_file, output_dir, cols_config_path, target_col)
+
+
 if __name__ == "__main__":
-    preprocess_data(
-        input_file="data/raw/DNN-EdgeIIoT-dataset.csv",
-        output_dir="data/processed",
-        cols_config_path="data/config/valid_columns.yaml",
-        target="Attack_label",
-    )
+    run()
+
+# python -m src.pipelines.x01_preprocess \
+# --input_file data/raw/DNN-EdgeIIoT-dataset.csv \
+# --output_dir data/processed --cols_config_path data/config/valid_columns.yaml \
+# --target_col Attack_label

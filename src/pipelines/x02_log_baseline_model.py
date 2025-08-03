@@ -1,3 +1,4 @@
+import click
 import pandas as pd
 import xgboost as xgb
 import mlflow
@@ -6,9 +7,11 @@ from mlflow.models import infer_signature
 from src.utils.metrics import get_metrics_binary
 from src.utils.logger import logger
 
+MLFLOW_TRACKING_URI = "http://localhost:5000"
+EXPERIMENT_NAME = "EdgeIIoT_02_Baseline"
 
-mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_experiment("1_baseline_model")
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+mlflow.set_experiment(EXPERIMENT_NAME)
 
 
 def train_and_log_baseline_model(
@@ -22,11 +25,11 @@ def train_and_log_baseline_model(
     ----------
     preprocessed_data_dir : str
         Directory where the preprocessed data is stored.
-    target : str
+    target_col : str
         Name of the target column in the dataset. Default is "Attack_label".
     """
     # Load the preprocessed data
-    logger.info("Loading preprocessed data from %s", preprocessed_data_dir)
+    logger.info(f"Loading preprocessed data from {preprocessed_data_dir}")
     df_train = pd.read_parquet(f"{preprocessed_data_dir}/train.parquet")
     df_val = pd.read_parquet(f"{preprocessed_data_dir}/val.parquet")
 
@@ -65,6 +68,7 @@ def train_and_log_baseline_model(
             name="xgb_classifier",
             model_format="ubj",
             signature=signature,
+            registered_model_name="XGB-binary-baseline",
         )
 
         # Log the data pipeline (linking with the logged model in MLflow)
@@ -76,8 +80,28 @@ def train_and_log_baseline_model(
         logger.info("Model and metrics logged successfully")
 
 
-if __name__ == "__main__":
+@click.command()
+@click.option(
+    "--preprocessed_data_dir",
+    default="data/processed",
+    help="Directory where the preprocessed data is stored.",
+)
+@click.option(
+    "--target_col",
+    default="Attack_label",
+    help="Name of the target column in the dataset.",
+)
+def run(preprocessed_data_dir, target_col):
+    """Command-line interface to run the baseline model training and logging."""
     train_and_log_baseline_model(
-        preprocessed_data_dir="data/processed",
-        target="Attack_label",
+        preprocessed_data_dir=preprocessed_data_dir,
+        target_col=target_col,
     )
+
+
+if __name__ == "__main__":
+    run()
+
+# python -m src.pipelines.x02_log_baseline_model \
+# --preprocessed_data_dir data/processed \
+# --target_col Attack_label
