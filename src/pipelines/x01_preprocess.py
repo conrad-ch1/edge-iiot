@@ -69,17 +69,14 @@ def preprocess_data(
     data_pipeline.fit(X_train)
     X_train_transformed = data_pipeline.transform(X_train)
     X_val_transformed = data_pipeline.transform(X_val)
-    X_test_transformed = data_pipeline.transform(X_test)
 
     # Save the transformed datasets to parquet files
     logger.info(f"Saving preprocessed data to {output_dir}")
     df_train = pd.concat([X_train_transformed, y_train], axis=1)
     df_val = pd.concat([X_val_transformed, y_val], axis=1)
-    df_test = pd.concat([X_test_transformed, y_test], axis=1)
 
     df_train.to_parquet(f"{output_dir}/train.parquet")
     df_val.to_parquet(f"{output_dir}/val.parquet")
-    df_test.to_parquet(f"{output_dir}/test.parquet")
 
     # Save the preprocessing pipeline
     joblib.dump(data_pipeline, f"{output_dir}/data_pipeline.joblib")
