@@ -39,6 +39,7 @@ with DAG(
             COMMON_PREFIX + "src.pipelines.x01_preprocess "
             f"--input_file {DATA_DIR}/raw/DNN-EdgeIIoT-dataset.csv "
             f"--output_dir {DATA_DIR}/processed "
+            f"--holdout_dir {DATA_DIR}/raw "
             f"--cols_config_path {DATA_DIR}/config/valid_columns.yaml "
             f"--target_col Attack_label"
         )

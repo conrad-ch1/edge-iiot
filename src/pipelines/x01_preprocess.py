@@ -16,6 +16,7 @@ from src.utils.logger import logger
 def preprocess_data(
     input_file: str,
     output_dir: str,
+    holdout_dir: str,
     cols_config_path: str,
     target_col: str = "Attack_label",
 ) -> None:
@@ -84,8 +85,8 @@ def preprocess_data(
     # Save the holdout test in chunks set for later evaluation
     df_holdout_test_1 = df_holdout_test.iloc[: len(df_holdout_test) // 2]
     df_holdout_test_2 = df_holdout_test.iloc[len(df_holdout_test) // 2 :]
-    df_holdout_test_1.to_parquet(f"{output_dir}/holdout_test_1.parquet")
-    df_holdout_test_2.to_parquet(f"{output_dir}/holdout_test_2.parquet")
+    df_holdout_test_1.to_parquet(f"{holdout_dir}/holdout_test_1.parquet")
+    df_holdout_test_2.to_parquet(f"{holdout_dir}/holdout_test_2.parquet")
 
     # Save the preprocessing pipeline
     joblib.dump(data_pipeline, f"{output_dir}/data_pipeline.joblib")
@@ -105,6 +106,11 @@ def preprocess_data(
     help="Directory where the preprocessed data will be saved.",
 )
 @click.option(
+    "--holdout_dir",
+    default="data/holdout",
+    help="Directory where the holdout test data will be saved.",
+)
+@click.option(
     "--cols_config_path",
     default="data/config/valid_columns.yaml",
     help="Path to the YAML file containing column configurations.",
@@ -114,9 +120,9 @@ def preprocess_data(
     default="Attack_label",
     help="Name of the target column in the dataset.",
 )
-def run(input_file, output_dir, cols_config_path, target_col):
+def run(input_file, output_dir, holdout_dir, cols_config_path, target_col):
     """Command-line interface to run the data preprocessing pipeline."""
-    preprocess_data(input_file, output_dir, cols_config_path, target_col)
+    preprocess_data(input_file, output_dir, holdout_dir, cols_config_path, target_col)
 
 
 if __name__ == "__main__":
@@ -125,4 +131,5 @@ if __name__ == "__main__":
 # python -m src.pipelines.x01_preprocess \
 # --input_file data/raw/DNN-EdgeIIoT-dataset.csv \
 # --output_dir data/processed --cols_config_path data/config/valid_columns.yaml \
+# --holdout_dir data/raw/
 # --target_col Attack_label
