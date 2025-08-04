@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from utils.metrics import get_metrics_binary
-from utils.logger import logger
+from src.utils.metrics import get_metrics_binary
+from src.utils.logger import logger
 
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 EXPERIMENT_NAME = "EdgeIIoT_02_Optimization"

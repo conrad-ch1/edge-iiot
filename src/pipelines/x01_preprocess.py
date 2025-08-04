@@ -4,13 +4,13 @@ import joblib
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 
-from utils.data_processing import (
+from src.utils.data_processing import (
     FeatureSelector,
     MissingValueHandler,
     CategoricalFeatureProcessor,
     CustomDictVectorizer,
 )
-from utils.logger import logger
+from src.utils.logger import logger
 
 
 def preprocess_data(
