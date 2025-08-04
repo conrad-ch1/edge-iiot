@@ -24,3 +24,29 @@ make all
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 
 airflow airflow
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sending data
+
+aws kinesis put-record \
+  --stream-name security_events \
+  --partition-key "1" \
+  --data "25" \            
+  --region eu-central-1

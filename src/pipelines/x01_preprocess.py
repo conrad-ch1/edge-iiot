@@ -75,8 +75,17 @@ def preprocess_data(
     df_train = pd.concat([X_train_transformed, y_train], axis=1)
     df_val = pd.concat([X_val_transformed, y_val], axis=1)
 
+    # Keep the test set for later use
+    df_holdout_test = pd.concat([X_test, y_test], axis=1)
+
     df_train.to_parquet(f"{output_dir}/train.parquet")
     df_val.to_parquet(f"{output_dir}/val.parquet")
+
+    # Save the holdout test in chunks set for later evaluation
+    df_holdout_test_1 = df_holdout_test.iloc[: len(df_holdout_test) // 2]
+    df_holdout_test_2 = df_holdout_test.iloc[len(df_holdout_test) // 2 :]
+    df_holdout_test_1.to_parquet(f"{output_dir}/holdout_test_1.parquet")
+    df_holdout_test_2.to_parquet(f"{output_dir}/holdout_test_2.parquet")
 
     # Save the preprocessing pipeline
     joblib.dump(data_pipeline, f"{output_dir}/data_pipeline.joblib")
