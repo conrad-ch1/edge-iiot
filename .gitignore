@@ -1,6 +1,6 @@
 # Custom
 mlflow/mlartifacts/
-data/raw/
+data/raw/*DNN*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
