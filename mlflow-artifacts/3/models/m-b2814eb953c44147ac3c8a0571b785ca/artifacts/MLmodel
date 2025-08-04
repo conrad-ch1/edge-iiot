@@ -1,0 +1,98 @@
+artifact_path: mlflow-artifacts:/3/models/m-b2814eb953c44147ac3c8a0571b785ca/artifacts
+flavors:
+  python_function:
+    data: model.ubj
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.12.11
+  xgboost:
+    code: null
+    data: model.ubj
+    model_class: xgboost.sklearn.XGBClassifier
+    model_format: ubj
+    xgb_version: 3.0.2
+is_signature_from_type_hint: false
+mlflow_version: 3.1.4
+model_id: m-b2814eb953c44147ac3c8a0571b785ca
+model_size_bytes: 145142
+model_uuid: m-b2814eb953c44147ac3c8a0571b785ca
+prompts: null
+run_id: 2bb989e1c0324e24acf7607ef7201bae
+signature:
+  inputs: '[{"type": "double", "name": "arp.hw.size", "required": true}, {"type":
+    "double", "name": "arp.opcode", "required": true}, {"type": "double", "name":
+    "dns.qry.name", "required": true}, {"type": "double", "name": "dns.qry.name.len=0_debian_pool_ntp_org",
+    "required": true}, {"type": "double", "name": "dns.qry.name.len=1_0", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=1_debian_pool_ntp_org", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=2_debian_pool_ntp_org", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=3_debian_pool_ntp_org", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=_googlecast__tcp_local", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=null_null_local", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=raspberrypi_local", "required":
+    true}, {"type": "double", "name": "dns.qry.name.len=unknown", "required": true},
+    {"type": "double", "name": "dns.qry.qu", "required": true}, {"type": "double",
+    "name": "dns.retransmission", "required": true}, {"type": "double", "name": "dns.retransmit_request",
+    "required": true}, {"type": "double", "name": "dns.retransmit_request_in", "required":
+    true}, {"type": "double", "name": "http.content_length", "required": true}, {"type":
+    "double", "name": "http.referer=127_0_0_1", "required": true}, {"type": "double",
+    "name": "http.referer=TESTING_PURPOSES_ONLY", "required": true}, {"type": "double",
+    "name": "http.referer=_____echo_93e4r0_CVE_2014_6278_true_echo_echo_", "required":
+    true}, {"type": "double", "name": "http.referer=unknown", "required": true}, {"type":
+    "double", "name": "http.request.method=GET", "required": true}, {"type": "double",
+    "name": "http.request.method=OPTIONS", "required": true}, {"type": "double", "name":
+    "http.request.method=POST", "required": true}, {"type": "double", "name": "http.request.method=PROPFIND",
+    "required": true}, {"type": "double", "name": "http.request.method=SEARCH", "required":
+    true}, {"type": "double", "name": "http.request.method=TRACE", "required": true},
+    {"type": "double", "name": "http.request.method=unknown", "required": true}, {"type":
+    "double", "name": "http.request.version=HTTP_1_0", "required": true}, {"type":
+    "double", "name": "http.request.version=HTTP_1_1", "required": true}, {"type":
+    "double", "name": "http.request.version=Src_javascript_alert_Vulnerable_Img_Src_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=_a_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=_al_ABSOLUTE_PATH_STUDIP_http_cirt_net_rfiinc_txt_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=_al__PHPLIB_libdir_http_cirt_net_rfiinc_txt_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=_etc_passwd_data_Download_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=name_a_input_name_i_value_XSS_lt_script_alert_Vulnerable_script_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=script_alert_1_script_HTTP_1_1",
+    "required": true}, {"type": "double", "name": "http.request.version=unknown",
+    "required": true}, {"type": "double", "name": "http.response", "required": true},
+    {"type": "double", "name": "icmp.checksum", "required": true}, {"type": "double",
+    "name": "icmp.seq_le", "required": true}, {"type": "double", "name": "mbtcp.len",
+    "required": true}, {"type": "double", "name": "mbtcp.trans_id", "required": true},
+    {"type": "double", "name": "mbtcp.unit_id", "required": true}, {"type": "double",
+    "name": "mqtt.conack.flags=0x00000000", "required": true}, {"type": "double",
+    "name": "mqtt.conack.flags=1461073", "required": true}, {"type": "double", "name":
+    "mqtt.conack.flags=1461074", "required": true}, {"type": "double", "name": "mqtt.conack.flags=1461383",
+    "required": true}, {"type": "double", "name": "mqtt.conack.flags=1461384", "required":
+    true}, {"type": "double", "name": "mqtt.conack.flags=1461589", "required": true},
+    {"type": "double", "name": "mqtt.conack.flags=1461591", "required": true}, {"type":
+    "double", "name": "mqtt.conack.flags=1471198", "required": true}, {"type": "double",
+    "name": "mqtt.conack.flags=1471199", "required": true}, {"type": "double", "name":
+    "mqtt.conack.flags=1574358", "required": true}, {"type": "double", "name": "mqtt.conack.flags=1574359",
+    "required": true}, {"type": "double", "name": "mqtt.conack.flags=unknown", "required":
+    true}, {"type": "double", "name": "mqtt.conflag.cleansess", "required": true},
+    {"type": "double", "name": "mqtt.conflags", "required": true}, {"type": "double",
+    "name": "mqtt.hdrflags", "required": true}, {"type": "double", "name": "mqtt.len",
+    "required": true}, {"type": "double", "name": "mqtt.msgtype", "required": true},
+    {"type": "double", "name": "mqtt.proto_len", "required": true}, {"type": "double",
+    "name": "mqtt.protoname=MQTT", "required": true}, {"type": "double", "name": "mqtt.protoname=unknown",
+    "required": true}, {"type": "double", "name": "mqtt.topic=Temperature_and_Humidity",
+    "required": true}, {"type": "double", "name": "mqtt.topic=unknown", "required":
+    true}, {"type": "double", "name": "mqtt.topic_len", "required": true}, {"type":
+    "double", "name": "mqtt.ver", "required": true}, {"type": "double", "name": "tcp.ack",
+    "required": true}, {"type": "double", "name": "tcp.ack_raw", "required": true},
+    {"type": "double", "name": "tcp.checksum", "required": true}, {"type": "double",
+    "name": "tcp.connection.fin", "required": true}, {"type": "double", "name": "tcp.connection.rst",
+    "required": true}, {"type": "double", "name": "tcp.connection.syn", "required":
+    true}, {"type": "double", "name": "tcp.connection.synack", "required": true},
+    {"type": "double", "name": "tcp.flags", "required": true}, {"type": "double",
+    "name": "tcp.flags.ack", "required": true}, {"type": "double", "name": "tcp.len",
+    "required": true}, {"type": "double", "name": "tcp.seq", "required": true}, {"type":
+    "double", "name": "udp.stream", "required": true}, {"type": "double", "name":
+    "udp.time_delta", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-08-04 20:45:07.468704'

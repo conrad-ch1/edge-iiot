@@ -82,6 +82,17 @@ dev-install: setup ## Install development dependencies (if requirements-dev.txt 
 		echo "No requirements-dev.txt found."; \
 	fi
 
+# MLflow targets
+mlflow-server: ## Start MLflow server with PostgreSQL backend and S3 artifacts
+	@echo "Starting MLflow server..."
+	@echo "Make sure PostgreSQL and MinIO are running (docker compose up -d)"
+	@echo "MLflow UI will be available at http://localhost:5000"
+	mlflow server \
+		--backend-store-uri postgresql://user:password@localhost:5432/mlflowdb \
+		--artifacts-destination mlflow-artifacts \
+		--host 0.0.0.0 \
+		--port 5000
+
 # Code quality targets
 lint: ## Run linting (if Python files exist)
 	@if find . -name "*.py" -not -path "./venv/*" | grep -q .; then \
