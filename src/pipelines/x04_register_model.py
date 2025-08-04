@@ -6,8 +6,8 @@ from mlflow.models import infer_signature
 from mlflow.tracking import MlflowClient
 from mlflow.entities import ViewType
 
-from src.utils.metrics import get_metrics_binary
-from src.utils.logger import logger
+from utils.metrics import get_metrics_binary
+from utils.logger import logger
 
 MLFLOW_TRACKING_URI = "http://localhost:5000"
 EXPERIMENT_NAME_OPTIMIZATION = "EdgeIIoT_02_Optimization"

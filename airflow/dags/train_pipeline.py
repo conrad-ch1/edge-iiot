@@ -35,8 +35,8 @@ default_args = {
 with DAG(
     dag_id="xgb_binary_pipeline_bash",
     description="XGBoost binary-classification pipeline via @task.bash",
-    start_date=datetime(2023, 10, 1),
-    schedule="@daily",  # ← updated arg name
+    start_date=datetime(2025, 8, 1),
+    schedule="@daily",
     catchup=False,
     default_args=default_args,
     tags=["edge-iiot", "xgb-binary"],
