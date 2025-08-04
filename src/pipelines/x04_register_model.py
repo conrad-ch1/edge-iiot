@@ -1,3 +1,4 @@
+import os
 import click
 import pandas as pd
 import xgboost as xgb
@@ -5,11 +6,14 @@ import mlflow
 from mlflow.models import infer_signature
 from mlflow.tracking import MlflowClient
 from mlflow.entities import ViewType
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from utils.metrics import get_metrics_binary
 from utils.logger import logger
 
-MLFLOW_TRACKING_URI = "http://localhost:5000"
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 EXPERIMENT_NAME_OPTIMIZATION = "EdgeIIoT_02_Optimization"
 EXPERIMENT_NAME_PRODUCTION = "EdgeIIoT_03_Production"
 
