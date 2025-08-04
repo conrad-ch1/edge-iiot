@@ -88,7 +88,7 @@ mlflow-server: ## Start MLflow server with PostgreSQL backend and S3 artifacts
 	@echo "Make sure PostgreSQL and MinIO are running (docker compose up -d)"
 	@echo "MLflow UI will be available at http://localhost:5000"
 	mlflow server \
-		--backend-store-uri postgresql://user:password@localhost:5432/mlflowdb \
+		--backend-store-uri sqlite:///mlflow.db \
 		--artifacts-destination mlflow-artifacts \
 		--host 0.0.0.0 \
 		--port 5000
